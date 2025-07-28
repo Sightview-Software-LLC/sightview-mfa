@@ -4,7 +4,7 @@
       - name: Convert Markdown to HTML
         run: |
           mkdir -p _site
-          pandoc documentation/sightview-mfa-api-documentation.md \
+          pandoc documentation/sightview-mfa-api-docs.md \
             -f markdown \
             -t html5 \
             --standalone \
