@@ -365,7 +365,7 @@
             <div class="auth-section">
                 <h3>X-Api-Key Authentication</h3>
                 <p>Used for MFA Session API endpoints. The API key must be included in the request header:</p>
-                <pre><code>X-Api-Key: your-system-secret</code></pre>
+                <pre><code>X-Api-Key: &lt;your-system-secret&gt;</code></pre>
                 <p>The key must match a configured system secret in the MFA service's <code>SystemList</code> configuration.</p>
             </div>
             
@@ -505,7 +505,7 @@
             
             <h3>Example Request</h3>
             <pre><code class="http"><span class="method">POST</span> <span class="url">https://mfaservice.local/api/mfasession/start</span>
-<span class="header-name">X-Api-Key:</span> <span class="header-value">supersecret123</span>
+<span class="header-name">X-Api-Key:</span> <span class="header-value">&lt;your-api-key&gt;</span>
 <span class="header-name">Content-Type:</span> <span class="header-value">application/json</span>
 
 {
@@ -648,7 +648,7 @@
             
             <h3>Example Request</h3>
             <pre><code class="http"><span class="method">POST</span> <span class="url">https://mfaservice.local/api/mfasession/confirm</span>
-<span class="header-name">X-Api-Key:</span> <span class="header-value">supersecret123</span>
+<span class="header-name">X-Api-Key:</span> <span class="header-value">&lt;your-api-key&gt;</span>
 <span class="header-name">Content-Type:</span> <span class="header-value">application/json</span>
 
 {
@@ -739,7 +739,7 @@
             
             <h3>Example Request</h3>
             <pre><code class="http"><span class="method">GET</span> <span class="url">https://mfaadmin.local/api/user/PHPPortal/active</span>
-<span class="header-name">Authorization:</span> <span class="header-value">Bearer eyJ0eXAiOiJKV1QiLCJhbGc...</span></code></pre>
+<span class="header-name">Authorization:</span> <span class="header-value">Bearer &lt;token&gt;</span></code></pre>
             
             <hr>
             
@@ -812,7 +812,7 @@
             
             <h3>Example Request</h3>
             <pre><code class="http"><span class="method">PUT</span> <span class="url">https://mfaadmin.local/api/user/PHPPortal/usr_123456</span>
-<span class="header-name">Authorization:</span> <span class="header-value">Bearer eyJ0eXAiOiJKV1QiLCJhbGc...</span>
+<span class="header-name">Authorization:</span> <span class="header-value">Bearer &lt;token&gt;</span>
 <span class="header-name">Content-Type:</span> <span class="header-value">application/json</span>
 
 {
@@ -885,7 +885,7 @@
             
             <h3>Example Request</h3>
             <pre><code class="http"><span class="method">DELETE</span> <span class="url">https://mfaadmin.local/api/user/PHPPortal/usr_123456</span>
-<span class="header-name">Authorization:</span> <span class="header-value">Bearer eyJ0eXAiOiJKV1QiLCJhbGc...</span></code></pre>
+<span class="header-name">Authorization:</span> <span class="header-value">Bearer &lt;token&gt;</span></code></pre>
             
             <hr>
             
@@ -955,7 +955,7 @@
             
             <h3>Example Request</h3>
             <pre><code class="http"><span class="method">GET</span> <span class="url">https://mfaadmin.local/api/notice/PHPPortal/active</span>
-<span class="header-name">Authorization:</span> <span class="header-value">Bearer eyJ0eXAiOiJKV1QiLCJhbGc...</span></code></pre>
+<span class="header-name">Authorization:</span> <span class="header-value">Bearer &lt;token&gt;</span></code></pre>
             
             <hr>
             
@@ -1056,7 +1056,7 @@
             
             <h3>Example Request</h3>
             <pre><code class="http"><span class="method">POST</span> <span class="url">https://mfaadmin.local/api/notice/PHPPortal</span>
-<span class="header-name">Authorization:</span> <span class="header-value">Bearer eyJ0eXAiOiJKV1QiLCJhbGc...</span>
+<span class="header-name">Authorization:</span> <span class="header-value">Bearer &lt;token&gt;</span>
 <span class="header-name">Content-Type:</span> <span class="header-value">application/json</span>
 
 {
@@ -1185,7 +1185,7 @@
             <p>Retrieves a specific access log entry by ID.</p>
             
             <h3>Authentication</h3>
-            <p>Azure AD Bearer token required</p>
+            <p>None (public endpoint)</p>
             
             <h3>Parameters</h3>
             
@@ -1217,13 +1217,17 @@
                     <span class="status-code status-success">200 OK</span>
                 </div>
                 <pre><code class="json">{
-  <span class="key">"accessLogId"</span>: <span class="number">123</span>,
+  <span class="key">"id"</span>: <span class="number">123</span>,
   <span class="key">"sessionId"</span>: <span class="string">"a7b8c9d0-1234-5678-9012-e3f4567890ab"</span>,
   <span class="key">"systemName"</span>: <span class="string">"PHPPortal"</span>,
   <span class="key">"accessTime"</span>: <span class="string">"2024-05-03T15:45:23Z"</span>,
   <span class="key">"userId"</span>: <span class="string">"usr_123456"</span>,
   <span class="key">"email"</span>: <span class="string">"user@example.com"</span>,
-  <span class="key">"logType"</span>: <span class="number">0</span>,
+  <span class="key">"authType"</span>: <span class="string">"totp"</span>,
+  <span class="key">"entryType"</span>: <span class="string">"Info"</span>,
+  <span class="key">"ipAddress"</span>: <span class="string">"192.168.1.100"</span>,
+  <span class="key">"userAgent"</span>: <span class="string">"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"</span>,
+  <span class="key">"referrer"</span>: <span class="string">"https://yourapp.example.com/login"</span>,
   <span class="key">"message"</span>: <span class="string">"User authenticated successfully"</span>,
   <span class="key">"sessionCommand"</span>: <span class="string">"Auth"</span>
 }</code></pre>
@@ -1239,8 +1243,7 @@
             </div>
             
             <h3>Example Request</h3>
-            <pre><code class="http"><span class="method">GET</span> <span class="url">https://mfaadmin.local/api/log/123</span>
-<span class="header-name">Authorization:</span> <span class="header-value">Bearer eyJ0eXAiOiJKV1QiLCJhbGc...</span></code></pre>
+            <pre><code class="http"><span class="method">GET</span> <span class="url">https://mfaadmin.local/api/log/123</span></code></pre>
             
             <hr>
             
@@ -1253,7 +1256,7 @@
             <p>Searches access logs with various filter criteria.</p>
             
             <h3>Authentication</h3>
-            <p>Azure AD Bearer token required</p>
+            <p>None (public endpoint)</p>
             
             <h3>Parameters</h3>
             
@@ -1337,13 +1340,17 @@
                 </div>
                 <pre><code class="json">[
   {
-    <span class="key">"accessLogId"</span>: <span class="number">123</span>,
+    <span class="key">"id"</span>: <span class="number">123</span>,
     <span class="key">"sessionId"</span>: <span class="string">"a7b8c9d0-1234-5678-9012-e3f4567890ab"</span>,
     <span class="key">"systemName"</span>: <span class="string">"PHPPortal"</span>,
     <span class="key">"accessTime"</span>: <span class="string">"2024-05-03T15:45:23Z"</span>,
     <span class="key">"userId"</span>: <span class="string">"usr_123456"</span>,
     <span class="key">"email"</span>: <span class="string">"user@example.com"</span>,
-    <span class="key">"logType"</span>: <span class="number">0</span>,
+    <span class="key">"authType"</span>: <span class="string">"totp"</span>,
+    <span class="key">"entryType"</span>: <span class="string">"Info"</span>,
+    <span class="key">"ipAddress"</span>: <span class="string">"192.168.1.100"</span>,
+    <span class="key">"userAgent"</span>: <span class="string">"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"</span>,
+    <span class="key">"referrer"</span>: <span class="string">"https://yourapp.example.com/login"</span>,
     <span class="key">"message"</span>: <span class="string">"User authenticated successfully"</span>,
     <span class="key">"sessionCommand"</span>: <span class="string">"Auth"</span>
   }
@@ -1351,8 +1358,7 @@
             </div>
             
             <h3>Example Request</h3>
-            <pre><code class="http"><span class="method">GET</span> <span class="url">https://mfaadmin.local/api/log?systemName=PHPPortal&amp;take=50&amp;email=user@example.com</span>
-<span class="header-name">Authorization:</span> <span class="header-value">Bearer eyJ0eXAiOiJKV1QiLCJhbGc...</span></code></pre>
+            <pre><code class="http"><span class="method">GET</span> <span class="url">https://mfaadmin.local/api/log?systemName=PHPPortal&amp;take=50&amp;email=user@example.com</span></code></pre>
             
             <hr>
             
@@ -1365,7 +1371,7 @@
             <p>Returns the count of access logs matching the filter criteria.</p>
             
             <h3>Authentication</h3>
-            <p>Azure AD Bearer token required</p>
+            <p>None (public endpoint)</p>
             
             <h3>Parameters</h3>
             
@@ -1383,8 +1389,7 @@
             </div>
             
             <h3>Example Request</h3>
-            <pre><code class="http"><span class="method">GET</span> <span class="url">https://mfaadmin.local/api/log/count?systemName=PHPPortal</span>
-<span class="header-name">Authorization:</span> <span class="header-value">Bearer eyJ0eXAiOiJKV1QiLCJhbGc...</span></code></pre>
+            <pre><code class="http"><span class="method">GET</span> <span class="url">https://mfaadmin.local/api/log/count?systemName=PHPPortal</span></code></pre>
             
             <hr>
             
@@ -1397,7 +1402,7 @@
             <p>Deletes an access log entry.</p>
             
             <h3>Authentication</h3>
-            <p>Azure AD Bearer token required</p>
+            <p>None (public endpoint)</p>
             
             <h3>Parameters</h3>
             
@@ -1442,8 +1447,7 @@
             </div>
             
             <h3>Example Request</h3>
-            <pre><code class="http"><span class="method">DELETE</span> <span class="url">https://mfaadmin.local/api/log/123</span>
-<span class="header-name">Authorization:</span> <span class="header-value">Bearer eyJ0eXAiOiJKV1QiLCJhbGc...</span></code></pre>
+            <pre><code class="http"><span class="method">DELETE</span> <span class="url">https://mfaadmin.local/api/log/123</span></code></pre>
             
             <hr>
             
@@ -1456,7 +1460,7 @@
             <p>Retrieves access logs for a specific system.</p>
             
             <h3>Authentication</h3>
-            <p>Azure AD Bearer token required</p>
+            <p>None (public endpoint)</p>
             
             <h3>Parameters</h3>
             
@@ -1520,8 +1524,7 @@
             </div>
             
             <h3>Example Request</h3>
-            <pre><code class="http"><span class="method">GET</span> <span class="url">https://mfaadmin.local/api/log/system/PHPPortal?take=20</span>
-<span class="header-name">Authorization:</span> <span class="header-value">Bearer eyJ0eXAiOiJKV1QiLCJhbGc...</span></code></pre>
+            <pre><code class="http"><span class="method">GET</span> <span class="url">https://mfaadmin.local/api/log/system/PHPPortal?take=20</span></code></pre>
             
             <hr>
             
@@ -1534,7 +1537,7 @@
             <p>Retrieves recent access logs for a specific system.</p>
             
             <h3>Authentication</h3>
-            <p>Azure AD Bearer token required</p>
+            <p>None (public endpoint)</p>
             
             <h3>Parameters</h3>
             
@@ -1591,8 +1594,7 @@
             </div>
             
             <h3>Example Request</h3>
-            <pre><code class="http"><span class="method">GET</span> <span class="url">https://mfaadmin.local/api/log/system/PHPPortal/recent?hours=48</span>
-<span class="header-name">Authorization:</span> <span class="header-value">Bearer eyJ0eXAiOiJKV1QiLCJhbGc...</span></code></pre>
+            <pre><code class="http"><span class="method">GET</span> <span class="url">https://mfaadmin.local/api/log/system/PHPPortal/recent?hours=48</span></code></pre>
             
             <hr>
             
@@ -1605,7 +1607,7 @@
             <p>Retrieves all access logs for a specific session.</p>
             
             <h3>Authentication</h3>
-            <p>Azure AD Bearer token required</p>
+            <p>None (public endpoint)</p>
             
             <h3>Parameters</h3>
             
@@ -1646,8 +1648,7 @@
             </div>
             
             <h3>Example Request</h3>
-            <pre><code class="http"><span class="method">GET</span> <span class="url">https://mfaadmin.local/api/log/system/PHPPortal/a7b8c9d0-1234-5678-9012-e3f4567890ab</span>
-<span class="header-name">Authorization:</span> <span class="header-value">Bearer eyJ0eXAiOiJKV1QiLCJhbGc...</span></code></pre>
+            <pre><code class="http"><span class="method">GET</span> <span class="url">https://mfaadmin.local/api/log/system/PHPPortal/a7b8c9d0-1234-5678-9012-e3f4567890ab</span></code></pre>
             
         </main>
     </div>
