@@ -1,0 +1,1704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MFA Service API Documentation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --sidebar-width: 280px;
+            --sidebar-bg: #2e3e4e;
+            --sidebar-hover: #3e4e5e;
+            --main-bg: #ffffff;
+            --code-bg: #f4f7f9;
+            --text-primary: #333;
+            --text-secondary: #666;
+            --accent: #3498db;
+            --border-color: #e1e8ed;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: var(--main-bg);
+        }
+
+        /* Layout */
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--sidebar-bg);
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-header h1 {
+            color: #fff;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .nav-section {
+            padding: 15px 0;
+        }
+
+        .nav-section-title {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 0 20px 10px;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 8px 20px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-link:hover {
+            background: var(--sidebar-hover);
+            color: #fff;
+        }
+
+        .nav-link.active {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .nav-link.sub-link {
+            padding-left: 35px;
+            font-size: 13px;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 40px;
+            max-width: 1200px;
+        }
+
+        /* Typography */
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+
+        h1 { font-size: 36px; margin-bottom: 24px; }
+        h2 { font-size: 28px; margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border-color); }
+        h3 { font-size: 22px; margin-top: 32px; }
+        h4 { font-size: 18px; margin-top: 24px; }
+
+        p {
+            margin-bottom: 16px;
+            line-height: 1.7;
+        }
+
+        /* Endpoint Headers */
+        .endpoint-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 32px 0 16px;
+        }
+
+        .method-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #fff;
+        }
+
+        .method-get { background: var(--success); }
+        .method-post { background: var(--accent); }
+        .method-put { background: var(--warning); }
+        .method-delete { background: var(--danger); }
+
+        .endpoint-path {
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 18px;
+            color: var(--text-primary);
+        }
+
+        /* Code Blocks */
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 16px;
+            overflow-x: auto;
+            margin-bottom: 16px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        code {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            background: var(--code-bg);
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            margin-bottom: 24px;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background: var(--code-bg);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Authentication Sections */
+        .auth-section {
+            background: #f8f9fa;
+            border-left: 4px solid var(--accent);
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+
+        .auth-section h3 {
+            margin-top: 0;
+            font-size: 16px;
+        }
+
+        /* Response Sections */
+        .response-section {
+            margin-top: 24px;
+        }
+
+        .response-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .status-code {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .status-success { background: var(--success); }
+        .status-error { background: var(--danger); }
+
+        /* Lists */
+        ul, ol {
+            margin-bottom: 16px;
+            padding-left: 24px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        /* Horizontal Rule */
+        hr {
+            border: none;
+            border-top: 1px solid var(--border-color);
+            margin: 32px 0;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+                position: fixed;
+                top: 20px;
+                left: 20px;
+                z-index: 1001;
+                background: var(--accent);
+                color: #fff;
+                border: none;
+                padding: 10px;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+        }
+
+        /* Syntax Highlighting */
+        .json .key { color: #881391; }
+        .json .string { color: #1a8f40; }
+        .json .number { color: #0086b3; }
+        .json .boolean { color: #0086b3; }
+        .json .null { color: #0086b3; }
+        
+        .http .method { color: #0086b3; font-weight: 600; }
+        .http .url { color: #1a8f40; }
+        .http .header-name { color: #881391; }
+        .http .header-value { color: #1a8f40; }
+    </style>
+</head>
+<body>
+    <button class="mobile-menu-toggle" onclick="toggleSidebar()">☰</button>
+    
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h1>MFA Service API</h1>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">Introduction</div>
+                <a href="#overview" class="nav-link">Overview</a>
+                <a href="#authentication" class="nav-link">Authentication</a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">MFA Session API</div>
+                <a href="#get-version" class="nav-link">Get Version</a>
+                <a href="#start-session" class="nav-link">Start Session</a>
+                <a href="#confirm-session" class="nav-link">Confirm Session</a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">Admin API - Users</div>
+                <a href="#get-users" class="nav-link">Get Users</a>
+                <a href="#update-user" class="nav-link">Update User</a>
+                <a href="#delete-user" class="nav-link">Delete User</a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">Admin API - Notices</div>
+                <a href="#get-notices" class="nav-link">Get Notices</a>
+                <a href="#create-notice" class="nav-link">Create Notice</a>
+                <a href="#update-notice" class="nav-link">Update Notice</a>
+                <a href="#delete-notice" class="nav-link">Delete Notice</a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">Admin API - Access Logs</div>
+                <a href="#get-log-by-id" class="nav-link">Get Log by ID</a>
+                <a href="#search-logs" class="nav-link">Search Logs</a>
+                <a href="#get-log-count" class="nav-link">Get Log Count</a>
+                <a href="#delete-log" class="nav-link">Delete Log</a>
+                <a href="#get-logs-by-system" class="nav-link">Get Logs by System</a>
+                <a href="#get-recent-logs" class="nav-link">Get Recent Logs</a>
+                <a href="#get-session-logs" class="nav-link">Get Session Logs</a>
+            </div>
+        </nav>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <h1 id="overview">MFA Service API Documentation</h1>
+            
+            <h2>Overview</h2>
+            <p>The MFA Service provides two sets of APIs:</p>
+            <ol>
+                <li><strong>MFA Session API</strong> - Core MFA functionality for initiating and confirming multi-factor authentication</li>
+                <li><strong>Admin API</strong> - Administrative endpoints for managing users, notices, and access logs</li>
+            </ol>
+            
+            <h2 id="authentication">Authentication</h2>
+            
+            <div class="auth-section">
+                <h3>X-Api-Key Authentication</h3>
+                <p>Used for MFA Session API endpoints. The API key must be included in the request header:</p>
+                <pre><code>X-Api-Key: your-system-secret</code></pre>
+                <p>The key must match a configured system secret in the MFA service's <code>SystemList</code> configuration.</p>
+            </div>
+            
+            <div class="auth-section">
+                <h3>Azure AD Authentication</h3>
+                <p>Used for Admin API endpoints. Requires a valid Bearer token from Azure AD:</p>
+                <pre><code>Authorization: Bearer &lt;token&gt;</code></pre>
+            </div>
+            
+            <hr>
+            
+            <h1>MFA Session API</h1>
+            
+            <!-- Get Version -->
+            <div class="endpoint-header" id="get-version">
+                <span class="method-badge method-get">GET</span>
+                <span class="endpoint-path">/api/mfasession/ver</span>
+            </div>
+            
+            <p>Returns the API version information.</p>
+            
+            <h3>Authentication</h3>
+            <p>None (public endpoint)</p>
+            
+            <h3>Parameters</h3>
+            <p>None</p>
+            
+            <h3>Response</h3>
+            
+            <div class="response-section">
+                <div class="response-header">
+                    <h4>Success Response</h4>
+                    <span class="status-code status-success">200 OK</span>
+                </div>
+                <pre><code class="text">MFA Service ver 1.0.0.0</code></pre>
+            </div>
+            
+            <h3>Example Request</h3>
+            <pre><code class="http"><span class="method">GET</span> <span class="url">https://mfaservice.local/api/mfasession/ver</span></code></pre>
+            
+            <h3>Example Response</h3>
+            <pre><code class="text">MFA Service ver 1.0.0.0</code></pre>
+            
+            <hr>
+            
+            <!-- Start Session -->
+            <div class="endpoint-header" id="start-session">
+                <span class="method-badge method-post">POST</span>
+                <span class="endpoint-path">/api/mfasession/start</span>
+            </div>
+            
+            <p>Initiates a new MFA session for a user. Returns a URL where the user should be redirected to complete MFA.</p>
+            
+            <h3>Authentication</h3>
+            <p>X-Api-Key header required</p>
+            
+            <h3>Parameters</h3>
+            
+            <h4>Request Body</h4>
+            <pre><code class="json">{
+  <span class="key">"email"</span>: <span class="string">"string // User's email address"</span>,
+  <span class="key">"userId"</span>: <span class="string">"string // Unique user identifier"</span>,
+  <span class="key">"systemName"</span>: <span class="string">"string // Calling system name"</span>,
+  <span class="key">"command"</span>: <span class="string">"string // Command type: Auth, Register, ResetPw, or Manage"</span>
+}</code></pre>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Field</th>
+                        <th>Type</th>
+                        <th>Required</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>email</td>
+                        <td>string</td>
+                        <td>Yes</td>
+                        <td>User's email address</td>
+                    </tr>
+                    <tr>
+                        <td>userId</td>
+                        <td>string</td>
+                        <td>Yes</td>
+                        <td>Unique identifier for the user in the calling system</td>
+                    </tr>
+                    <tr>
+                        <td>systemName</td>
+                        <td>string</td>
+                        <td>Yes</td>
+                        <td>Name of the calling system (must match configuration)</td>
+                    </tr>
+                    <tr>
+                        <td>command</td>
+                        <td>enum</td>
+                        <td>No</td>
+                        <td>MFA command type. Defaults to appropriate value based on user state</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <p><strong>Command Values:</strong></p>
+            <ul>
+                <li><code>Auth</code> - Standard authentication flow</li>
+                <li><code>Register</code> - New user registration/enrollment</li>
+                <li><code>ResetPw</code> - Password reset flow</li>
+                <li><code>Manage</code> - Manage MFA settings</li>
+            </ul>
+            
+            <h3>Response</h3>
+            
+            <div class="response-section">
+                <div class="response-header">
+                    <h4>Success Response</h4>
+                    <span class="status-code status-success">200 OK</span>
+                </div>
+                <pre><code class="text">/mfa/enrollment/init?sessionId=12345678-1234-1234-1234-123456789012</code></pre>
+                <p>Returns a relative URL path where the user should be redirected. The actual URL depends on:</p>
+                <ul>
+                    <li>New users or users without MFA: <code>/enrollment/init</code></li>
+                    <li>Existing users with MFA: <code>/auth</code></li>
+                    <li>ProxyPrefix is prepended if configured for the system</li>
+                </ul>
+            </div>
+            
+            <div class="response-section">
+                <div class="response-header">
+                    <h4>Error Responses</h4>
+                </div>
+                <ul>
+                    <li><span class="status-code status-error">400 Bad Request</span> - Missing required fields or database error</li>
+                    <li><span class="status-code status-error">401 Unauthorized</span> - Invalid or missing API key</li>
+                </ul>
+            </div>
+            
+            <h3>Example Request</h3>
+            <pre><code class="http"><span class="method">POST</span> <span class="url">https://mfaservice.local/api/mfasession/start</span>
+<span class="header-name">X-Api-Key:</span> <span class="header-value">supersecret123</span>
+<span class="header-name">Content-Type:</span> <span class="header-value">application/json</span>
+
+{
+  <span class="key">"email"</span>: <span class="string">"user@example.com"</span>,
+  <span class="key">"userId"</span>: <span class="string">"usr_123456"</span>,
+  <span class="key">"systemName"</span>: <span class="string">"PHPPortal"</span>,
+  <span class="key">"command"</span>: <span class="string">"Auth"</span>
+}</code></pre>
+            
+            <h3>Example Response</h3>
+            <pre><code class="text">/mfa/auth?sessionId=a7b8c9d0-1234-5678-9012-e3f4567890ab</code></pre>
+            
+            <hr>
+            
+            <!-- Confirm Session -->
+            <div class="endpoint-header" id="confirm-session">
+                <span class="method-badge method-post">POST</span>
+                <span class="endpoint-path">/api/mfasession/confirm</span>
+            </div>
+            
+            <p>Confirms that a user has successfully completed MFA. Returns user details and MFA status.</p>
+            
+            <h3>Authentication</h3>
+            <p>X-Api-Key header required</p>
+            
+            <h3>Parameters</h3>
+            
+            <h4>Request Body</h4>
+            <pre><code class="json">{
+  <span class="key">"email"</span>: <span class="string">"string // User's email address"</span>,
+  <span class="key">"userId"</span>: <span class="string">"string // Unique user identifier"</span>,
+  <span class="key">"systemName"</span>: <span class="string">"string // Calling system name"</span>
+}</code></pre>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Field</th>
+                        <th>Type</th>
+                        <th>Required</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>email</td>
+                        <td>string</td>
+                        <td>Yes</td>
+                        <td>User's email address</td>
+                    </tr>
+                    <tr>
+                        <td>userId</td>
+                        <td>string</td>
+                        <td>Yes</td>
+                        <td>Unique identifier for the user</td>
+                    </tr>
+                    <tr>
+                        <td>systemName</td>
+                        <td>string</td>
+                        <td>Yes</td>
+                        <td>Name of the calling system</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h3>Response</h3>
+            
+            <div class="response-section">
+                <div class="response-header">
+                    <h4>Success Response</h4>
+                    <span class="status-code status-success">200 OK</span>
+                </div>
+                <pre><code class="json">{
+  <span class="key">"userId"</span>: <span class="string">"usr_123456"</span>,
+  <span class="key">"sessionId"</span>: <span class="string">"a7b8c9d0-1234-5678-9012-e3f4567890ab"</span>,
+  <span class="key">"mfaEnabled"</span>: <span class="boolean">true</span>,
+  <span class="key">"preferredMfa"</span>: <span class="string">"totp"</span>,
+  <span class="key">"lastMfaValidation"</span>: <span class="string">"2024-05-03T15:45:23Z"</span>,
+  <span class="key">"cellNumber"</span>: <span class="string">"+1234567890"</span>,
+  <span class="key">"sessionExpiry"</span>: <span class="string">"2024-05-03T16:00:23Z"</span>
+}</code></pre>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>userId</td>
+                            <td>string</td>
+                            <td>The user ID that was passed in</td>
+                        </tr>
+                        <tr>
+                            <td>sessionId</td>
+                            <td>Guid</td>
+                            <td>The MFA session identifier</td>
+                        </tr>
+                        <tr>
+                            <td>mfaEnabled</td>
+                            <td>boolean</td>
+                            <td>Whether MFA is enabled for this user</td>
+                        </tr>
+                        <tr>
+                            <td>preferredMfa</td>
+                            <td>string</td>
+                            <td>User's preferred MFA method (totp, sms, email)</td>
+                        </tr>
+                        <tr>
+                            <td>lastMfaValidation</td>
+                            <td>DateTime</td>
+                            <td>ISO 8601 timestamp of last successful MFA</td>
+                        </tr>
+                        <tr>
+                            <td>cellNumber</td>
+                            <td>string</td>
+                            <td>User's phone number (may be null)</td>
+                        </tr>
+                        <tr>
+                            <td>sessionExpiry</td>
+                            <td>DateTime</td>
+                            <td>When the MFA session expires</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="response-section">
+                <div class="response-header">
+                    <h4>Error Responses</h4>
+                </div>
+                <ul>
+                    <li><span class="status-code status-error">400 Bad Request</span> - Missing required fields</li>
+                    <li><span class="status-code status-error">401 Unauthorized</span> - Invalid API key or user not found</li>
+                </ul>
+            </div>
+            
+            <h3>Example Request</h3>
+            <pre><code class="http"><span class="method">POST</span> <span class="url">https://mfaservice.local/api/mfasession/confirm</span>
+<span class="header-name">X-Api-Key:</span> <span class="header-value">supersecret123</span>
+<span class="header-name">Content-Type:</span> <span class="header-value">application/json</span>
+
+{
+  <span class="key">"email"</span>: <span class="string">"user@example.com"</span>,
+  <span class="key">"userId"</span>: <span class="string">"usr_123456"</span>,
+  <span class="key">"systemName"</span>: <span class="string">"PHPPortal"</span>
+}</code></pre>
+            
+            <h3>Example Response</h3>
+            <pre><code class="json">{
+  <span class="key">"userId"</span>: <span class="string">"usr_123456"</span>,
+  <span class="key">"sessionId"</span>: <span class="string">"a7b8c9d0-1234-5678-9012-e3f4567890ab"</span>,
+  <span class="key">"mfaEnabled"</span>: <span class="boolean">true</span>,
+  <span class="key">"preferredMfa"</span>: <span class="string">"totp"</span>,
+  <span class="key">"lastMfaValidation"</span>: <span class="string">"2024-05-03T15:45:23Z"</span>,
+  <span class="key">"cellNumber"</span>: <span class="string">"+1234567890"</span>,
+  <span class="key">"sessionExpiry"</span>: <span class="string">"2024-05-03T16:00:23Z"</span>
+}</code></pre>
+            
+            <hr>
+            
+            <h1>Admin API - Users</h1>
+            
+            <!-- Get Users -->
+            <div class="endpoint-header" id="get-users">
+                <span class="method-badge method-get">GET</span>
+                <span class="endpoint-path">/api/user/{systemName}/{filter}</span>
+            </div>
+            
+            <p>Retrieves users for a specific system with optional filtering.</p>
+            
+            <h3>Authentication</h3>
+            <p>Azure AD Bearer token required</p>
+            
+            <h3>Parameters</h3>
+            
+            <h4>Path Parameters</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Type</th>
+                        <th>Required</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>systemName</td>
+                        <td>string</td>
+                        <td>Yes</td>
+                        <td>Name of the system</td>
+                    </tr>
+                    <tr>
+                        <td>filter</td>
+                        <td>string</td>
+                        <td>Yes</td>
+                        <td>Filter type: "active" or "all"</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h3>Response</h3>
+            
+            <div class="response-section">
+                <div class="response-header">
+                    <h4>Success Response</h4>
+                    <span class="status-code status-success">200 OK</span>
+                </div>
+                <pre><code class="json">[
+  {
+    <span class="key">"userId"</span>: <span class="string">"usr_123456"</span>,
+    <span class="key">"systemName"</span>: <span class="string">"PHPPortal"</span>,
+    <span class="key">"email"</span>: <span class="string">"user@example.com"</span>,
+    <span class="key">"cellNumber"</span>: <span class="string">"+1234567890"</span>,
+    <span class="key">"mfaEnrolled"</span>: <span class="boolean">true</span>,
+    <span class="key">"preferredMfa"</span>: <span class="number">0</span>,
+    <span class="key">"totpSecret"</span>: <span class="null">null</span>,
+    <span class="key">"sessionId"</span>: <span class="string">"a7b8c9d0-1234-5678-9012-e3f4567890ab"</span>,
+    <span class="key">"sessionExpiry"</span>: <span class="string">"2024-05-03T16:00:00Z"</span>,
+    <span class="key">"lastMfaValidation"</span>: <span class="string">"2024-05-03T15:45:00Z"</span>,
+    <span class="key">"sessionCommand"</span>: <span class="number">0</span>,
+    <span class="key">"createdDate"</span>: <span class="string">"2024-01-01T00:00:00Z"</span>,
+    <span class="key">"lastUpdated"</span>: <span class="string">"2024-05-03T15:45:00Z"</span>
+  }
+]</code></pre>
+            </div>
+            
+            <h3>Example Request</h3>
+            <pre><code class="http"><span class="method">GET</span> <span class="url">https://mfaadmin.local/api/user/PHPPortal/active</span>
+<span class="header-name">Authorization:</span> <span class="header-value">Bearer eyJ0eXAiOiJKV1QiLCJhbGc...</span></code></pre>
+            
+            <hr>
+            
+            <!-- Update User -->
+            <div class="endpoint-header" id="update-user">
+                <span class="method-badge method-put">PUT</span>
+                <span class="endpoint-path">/api/user/{systemName}/{id}</span>
+            </div>
+            
+            <p>Updates a user's information.</p>
+            
+            <h3>Authentication</h3>
+            <p>Azure AD Bearer token required</p>
+            
+            <h3>Parameters</h3>
+            
+            <h4>Path Parameters</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Type</th>
+                        <th>Required</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>systemName</td>
+                        <td>string</td>
+                        <td>Yes</td>
+                        <td>Name of the system</td>
+                    </tr>
+                    <tr>
+                        <td>id</td>
+                        <td>string</td>
+                        <td>Yes</td>
+                        <td>User ID to update</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h4>Request Body</h4>
+            <pre><code class="json">{
+  <span class="key">"email"</span>: <span class="string">"string"</span>,
+  <span class="key">"cellNumber"</span>: <span class="string">"string"</span>,
+  <span class="key">"mfaEnrolled"</span>: <span class="boolean">boolean</span>,
+  <span class="key">"preferredMfa"</span>: <span class="number">number</span>
+}</code></pre>
+            
+            <h3>Response</h3>
+            
+            <div class="response-section">
+                <div class="response-header">
+                    <h4>Success Response</h4>
+                    <span class="status-code status-success">200 OK</span>
+                </div>
+                <p>Empty response body</p>
+            </div>
+            
+            <div class="response-section">
+                <div class="response-header">
+                    <h4>Error Responses</h4>
+                </div>
+                <ul>
+                    <li><span class="status-code status-error">401 Unauthorized</span> - Invalid or missing token</li>
+                    <li><span class="status-code status-error">404 Not Found</span> - User not found</li>
+                </ul>
+            </div>
+            
+            <h3>Example Request</h3>
+            <pre><code class="http"><span class="method">PUT</span> <span class="url">https://mfaadmin.local/api/user/PHPPortal/usr_123456</span>
+<span class="header-name">Authorization:</span> <span class="header-value">Bearer eyJ0eXAiOiJKV1QiLCJhbGc...</span>
+<span class="header-name">Content-Type:</span> <span class="header-value">application/json</span>
+
+{
+  <span class="key">"email"</span>: <span class="string">"newemail@example.com"</span>,
+  <span class="key">"cellNumber"</span>: <span class="string">"+1234567890"</span>,
+  <span class="key">"mfaEnrolled"</span>: <span class="boolean">true</span>,
+  <span class="key">"preferredMfa"</span>: <span class="number">0</span>
+}</code></pre>
+            
+            <hr>
+            
+            <!-- Delete User -->
+            <div class="endpoint-header" id="delete-user">
+                <span class="method-badge method-delete">DELETE</span>
+                <span class="endpoint-path">/api/user/{systemName}/{id}</span>
+            </div>
+            
+            <p>Deletes a user from the system.</p>
+            
+            <h3>Authentication</h3>
+            <p>Azure AD Bearer token required</p>
+            
+            <h3>Parameters</h3>
+            
+            <h4>Path Parameters</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Type</th>
+                        <th>Required</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>systemName</td>
+                        <td>string</td>
+                        <td>Yes</td>
+                        <td>Name of the system</td>
+                    </tr>
+                    <tr>
+                        <td>id</td>
+                        <td>string</td>
+                        <td>Yes</td>
+                        <td>User ID to delete</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h3>Response</h3>
+            
+            <div class="response-section">
+                <div class="response-header">
+                    <h4>Success Response</h4>
+                    <span class="status-code status-success">200 OK</span>
+                </div>
+                <p>Empty response body</p>
+            </div>
+            
+            <div class="response-section">
+                <div class="response-header">
+                    <h4>Error Responses</h4>
+                </div>
+                <ul>
+                    <li><span class="status-code status-error">401 Unauthorized</span> - Invalid or missing token</li>
+                    <li><span class="status-code status-error">404 Not Found</span> - User not found</li>
+                </ul>
+            </div>
+            
+            <h3>Example Request</h3>
+            <pre><code class="http"><span class="method">DELETE</span> <span class="url">https://mfaadmin.local/api/user/PHPPortal/usr_123456</span>
+<span class="header-name">Authorization:</span> <span class="header-value">Bearer eyJ0eXAiOiJKV1QiLCJhbGc...</span></code></pre>
+            
+            <hr>
+            
+            <h1>Admin API - Notices</h1>
+            
+            <!-- Get Notices -->
+            <div class="endpoint-header" id="get-notices">
+                <span class="method-badge method-get">GET</span>
+                <span class="endpoint-path">/api/notice/{systemName}/{scope}</span>
+            </div>
+            
+            <p>Retrieves notices for a specific system.</p>
+            
+            <h3>Authentication</h3>
+            <p>Azure AD Bearer token required</p>
+            
+            <h3>Parameters</h3>
+            
+            <h4>Path Parameters</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Type</th>
+                        <th>Required</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>systemName</td>
+                        <td>string</td>
+                        <td>Yes</td>
+                        <td>Name of the system</td>
+                    </tr>
+                    <tr>
+                        <td>scope</td>
+                        <td>string</td>
+                        <td>Yes</td>
+                        <td>Notice scope: "active" or "all"</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h3>Response</h3>
+            
+            <div class="response-section">
+                <div class="response-header">
+                    <h4>Success Response</h4>
+                    <span class="status-code status-success">200 OK</span>
+                </div>
+                <pre><code class="json">[
+  {
+    <span class="key">"noticeID"</span>: <span class="number">1</span>,
+    <span class="key">"systemName"</span>: <span class="string">"PHPPortal"</span>,
+    <span class="key">"title"</span>: <span class="string">"Scheduled Maintenance"</span>,
+    <span class="key">"message"</span>: <span class="string">"System will be unavailable from 2am-4am"</span>,
+    <span class="key">"urgency"</span>: <span class="number">1</span>,
+    <span class="key">"startDate"</span>: <span class="string">"2024-05-10T02:00:00Z"</span>,
+    <span class="key">"endDate"</span>: <span class="string">"2024-05-10T04:00:00Z"</span>,
+    <span class="key">"createDate"</span>: <span class="string">"2024-05-01T10:00:00Z"</span>,
+    <span class="key">"lastUpdate"</span>: <span class="string">"2024-05-01T10:00:00Z"</span>,
+    <span class="key">"editorEmail"</span>: <span class="string">"admin@example.com"</span>
+  }
+]</code></pre>
+            </div>
+            
+            <h3>Example Request</h3>
+            <pre><code class="http"><span class="method">GET</span> <span class="url">https://mfaadmin.local/api/notice/PHPPortal/active</span>
+<span class="header-name">Authorization:</span> <span class="header-value">Bearer eyJ0eXAiOiJKV1QiLCJhbGc...</span></code></pre>
+            
+            <hr>
+            
+            <!-- Create Notice -->
+            <div class="endpoint-header" id="create-notice">
+                <span class="method-badge method-post">POST</span>
+                <span class="endpoint-path">/api/notice/{systemName}</span>
+            </div>
+            
+            <p>Creates a new notice for a system.</p>
+            
+            <h3>Authentication</h3>
+            <p>Azure AD Bearer token required</p>
+            
+            <h3>Parameters</h3>
+            
+            <h4>Path Parameters</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Type</th>
+                        <th>Required</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>systemName</td>
+                        <td>string</td>
+                        <td>Yes</td>
+                        <td>Name of the system</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h4>Request Body</h4>
+            <pre><code class="json">{
+  <span class="key">"title"</span>: <span class="string">"string"</span>,
+  <span class="key">"message"</span>: <span class="string">"string"</span>,
+  <span class="key">"urgency"</span>: <span class="number">number</span>,
+  <span class="key">"startDate"</span>: <span class="string">"DateTime"</span>,
+  <span class="key">"endDate"</span>: <span class="string">"DateTime"</span>
+}</code></pre>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Field</th>
+                        <th>Type</th>
+                        <th>Required</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>title</td>
+                        <td>string</td>
+                        <td>Yes</td>
+                        <td>Notice title</td>
+                    </tr>
+                    <tr>
+                        <td>message</td>
+                        <td>string</td>
+                        <td>Yes</td>
+                        <td>Notice message</td>
+                    </tr>
+                    <tr>
+                        <td>urgency</td>
+                        <td>int</td>
+                        <td>Yes</td>
+                        <td>0=Info, 1=Warning, 2=Danger</td>
+                    </tr>
+                    <tr>
+                        <td>startDate</td>
+                        <td>DateTime</td>
+                        <td>Yes</td>
+                        <td>When notice becomes active</td>
+                    </tr>
+                    <tr>
+                        <td>endDate</td>
+                        <td>DateTime</td>
+                        <td>Yes</td>
+                        <td>When notice expires</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h3>Response</h3>
+            
+            <div class="response-section">
+                <div class="response-header">
+                    <h4>Success Response</h4>
+                    <span class="status-code status-success">200 OK</span>
+                </div>
+                <p>Empty response body</p>
+            </div>
+            
+            <h3>Example Request</h3>
+            <pre><code class="http"><span class="method">POST</span> <span class="url">https://mfaadmin.local/api/notice/PHPPortal</span>
+<span class="header-name">Authorization:</span> <span class="header-value">Bearer eyJ0eXAiOiJKV1QiLCJhbGc...</span>
+<span class="header-name">Content-Type:</span> <span class="header-value">application/json</span>
+
+{
+  <span class="key">"title"</span>: <span class="string">"Scheduled Maintenance"</span>,
+  <span class="key">"message"</span>: <span class="string">"System will be unavailable from 2am-4am"</span>,
+  <span class="key">"urgency"</span>: <span class="number">1</span>,
+  <span class="key">"startDate"</span>: <span class="string">"2024-05-10T02:00:00Z"</span>,
+  <span class="key">"endDate"</span>: <span class="string">"2024-05-10T04:00:00Z"</span>
+}</code></pre>
+            
+            <hr>
+            
+            <!-- Update Notice -->
+            <div class="endpoint-header" id="update-notice">
+                <span class="method-badge method-put">PUT</span>
+                <span class="endpoint-path">/api/notice/{systemName}/{id}</span>
+            </div>
+            
+            <p>Updates an existing notice.</p>
+            
+            <h3>Authentication</h3>
+            <p>Azure AD Bearer token required</p>
+            
+            <h3>Parameters</h3>
+            
+            <h4>Path Parameters</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Type</th>
+                        <th>Required</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>systemName</td>
+                        <td>string</td>
+                        <td>Yes</td>
+                        <td>Name of the system</td>
+                    </tr>
+                    <tr>
+                        <td>id</td>
+                        <td>int</td>
+                        <td>Yes</td>
+                        <td>Notice ID to update</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h4>Request Body</h4>
+            <p>Same as POST /api/notice/{systemName}</p>
+            
+            <h3>Response</h3>
+            
+            <div class="response-section">
+                <div class="response-header">
+                    <h4>Success Response</h4>
+                    <span class="status-code status-success">200 OK</span>
+                </div>
+                <p>Empty response body</p>
+            </div>
+            
+            <hr>
+            
+            <!-- Delete Notice -->
+            <div class="endpoint-header" id="delete-notice">
+                <span class="method-badge method-delete">DELETE</span>
+                <span class="endpoint-path">/api/notice/{systemName}/{id}</span>
+            </div>
+            
+            <p>Deletes a notice.</p>
+            
+            <h3>Authentication</h3>
+            <p>Azure AD Bearer token required</p>
+            
+            <h3>Parameters</h3>
+            
+            <h4>Path Parameters</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Type</th>
+                        <th>Required</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>systemName</td>
+                        <td>string</td>
+                        <td>Yes</td>
+                        <td>Name of the system</td>
+                    </tr>
+                    <tr>
+                        <td>id</td>
+                        <td>int</td>
+                        <td>Yes</td>
+                        <td>Notice ID to delete</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h3>Response</h3>
+            
+            <div class="response-section">
+                <div class="response-header">
+                    <h4>Success Response</h4>
+                    <span class="status-code status-success">200 OK</span>
+                </div>
+                <p>Empty response body</p>
+            </div>
+            
+            <hr>
+            
+            <h1>Admin API - Access Logs</h1>
+            
+            <!-- Get Log by ID -->
+            <div class="endpoint-header" id="get-log-by-id">
+                <span class="method-badge method-get">GET</span>
+                <span class="endpoint-path">/api/log/{id}</span>
+            </div>
+            
+            <p>Retrieves a specific access log entry by ID.</p>
+            
+            <h3>Authentication</h3>
+            <p>Azure AD Bearer token required</p>
+            
+            <h3>Parameters</h3>
+            
+            <h4>Path Parameters</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Type</th>
+                        <th>Required</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>id</td>
+                        <td>int</td>
+                        <td>Yes</td>
+                        <td>Access log ID</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h3>Response</h3>
+            
+            <div class="response-section">
+                <div class="response-header">
+                    <h4>Success Response</h4>
+                    <span class="status-code status-success">200 OK</span>
+                </div>
+                <pre><code class="json">{
+  <span class="key">"accessLogId"</span>: <span class="number">123</span>,
+  <span class="key">"sessionId"</span>: <span class="string">"a7b8c9d0-1234-5678-9012-e3f4567890ab"</span>,
+  <span class="key">"systemName"</span>: <span class="string">"PHPPortal"</span>,
+  <span class="key">"accessTime"</span>: <span class="string">"2024-05-03T15:45:23Z"</span>,
+  <span class="key">"userId"</span>: <span class="string">"usr_123456"</span>,
+  <span class="key">"email"</span>: <span class="string">"user@example.com"</span>,
+  <span class="key">"logType"</span>: <span class="number">0</span>,
+  <span class="key">"message"</span>: <span class="string">"User authenticated successfully"</span>,
+  <span class="key">"sessionCommand"</span>: <span class="string">"Auth"</span>
+}</code></pre>
+            </div>
+            
+            <div class="response-section">
+                <div class="response-header">
+                    <h4>Error Responses</h4>
+                </div>
+                <ul>
+                    <li><span class="status-code status-error">404 Not Found</span> - Log entry not found</li>
+                </ul>
+            </div>
+            
+            <h3>Example Request</h3>
+            <pre><code class="http"><span class="method">GET</span> <span class="url">https://mfaadmin.local/api/log/123</span>
+<span class="header-name">Authorization:</span> <span class="header-value">Bearer eyJ0eXAiOiJKV1QiLCJhbGc...</span></code></pre>
+            
+            <hr>
+            
+            <!-- Search Logs -->
+            <div class="endpoint-header" id="search-logs">
+                <span class="method-badge method-get">GET</span>
+                <span class="endpoint-path">/api/log</span>
+            </div>
+            
+            <p>Searches access logs with various filter criteria.</p>
+            
+            <h3>Authentication</h3>
+            <p>Azure AD Bearer token required</p>
+            
+            <h3>Parameters</h3>
+            
+            <h4>Query Parameters</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Type</th>
+                        <th>Required</th>
+                        <th>Default</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>sessionId</td>
+                        <td>Guid</td>
+                        <td>No</td>
+                        <td>null</td>
+                        <td>Filter by session ID</td>
+                    </tr>
+                    <tr>
+                        <td>systemName</td>
+                        <td>string</td>
+                        <td>No</td>
+                        <td>null</td>
+                        <td>Filter by system name</td>
+                    </tr>
+                    <tr>
+                        <td>accessTimeFrom</td>
+                        <td>DateTime</td>
+                        <td>No</td>
+                        <td>null</td>
+                        <td>Start time for access time range</td>
+                    </tr>
+                    <tr>
+                        <td>accessTimeTo</td>
+                        <td>DateTime</td>
+                        <td>No</td>
+                        <td>null</td>
+                        <td>End time for access time range</td>
+                    </tr>
+                    <tr>
+                        <td>email</td>
+                        <td>string</td>
+                        <td>No</td>
+                        <td>null</td>
+                        <td>Filter by user email</td>
+                    </tr>
+                    <tr>
+                        <td>sessionCommand</td>
+                        <td>string</td>
+                        <td>No</td>
+                        <td>null</td>
+                        <td>Filter by session command</td>
+                    </tr>
+                    <tr>
+                        <td>take</td>
+                        <td>int</td>
+                        <td>No</td>
+                        <td>100</td>
+                        <td>Number of records to return</td>
+                    </tr>
+                    <tr>
+                        <td>skip</td>
+                        <td>int</td>
+                        <td>No</td>
+                        <td>0</td>
+                        <td>Number of records to skip</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h3>Response</h3>
+            
+            <div class="response-section">
+                <div class="response-header">
+                    <h4>Success Response</h4>
+                    <span class="status-code status-success">200 OK</span>
+                </div>
+                <pre><code class="json">[
+  {
+    <span class="key">"accessLogId"</span>: <span class="number">123</span>,
+    <span class="key">"sessionId"</span>: <span class="string">"a7b8c9d0-1234-5678-9012-e3f4567890ab"</span>,
+    <span class="key">"systemName"</span>: <span class="string">"PHPPortal"</span>,
+    <span class="key">"accessTime"</span>: <span class="string">"2024-05-03T15:45:23Z"</span>,
+    <span class="key">"userId"</span>: <span class="string">"usr_123456"</span>,
+    <span class="key">"email"</span>: <span class="string">"user@example.com"</span>,
+    <span class="key">"logType"</span>: <span class="number">0</span>,
+    <span class="key">"message"</span>: <span class="string">"User authenticated successfully"</span>,
+    <span class="key">"sessionCommand"</span>: <span class="string">"Auth"</span>
+  }
+]</code></pre>
+            </div>
+            
+            <h3>Example Request</h3>
+            <pre><code class="http"><span class="method">GET</span> <span class="url">https://mfaadmin.local/api/log?systemName=PHPPortal&amp;take=50&amp;email=user@example.com</span>
+<span class="header-name">Authorization:</span> <span class="header-value">Bearer eyJ0eXAiOiJKV1QiLCJhbGc...</span></code></pre>
+            
+            <hr>
+            
+            <!-- Get Log Count -->
+            <div class="endpoint-header" id="get-log-count">
+                <span class="method-badge method-get">GET</span>
+                <span class="endpoint-path">/api/log/count</span>
+            </div>
+            
+            <p>Returns the count of access logs matching the filter criteria.</p>
+            
+            <h3>Authentication</h3>
+            <p>Azure AD Bearer token required</p>
+            
+            <h3>Parameters</h3>
+            
+            <h4>Query Parameters</h4>
+            <p>Same as GET /api/log (excluding take and skip)</p>
+            
+            <h3>Response</h3>
+            
+            <div class="response-section">
+                <div class="response-header">
+                    <h4>Success Response</h4>
+                    <span class="status-code status-success">200 OK</span>
+                </div>
+                <pre><code class="json">42</code></pre>
+            </div>
+            
+            <h3>Example Request</h3>
+            <pre><code class="http"><span class="method">GET</span> <span class="url">https://mfaadmin.local/api/log/count?systemName=PHPPortal</span>
+<span class="header-name">Authorization:</span> <span class="header-value">Bearer eyJ0eXAiOiJKV1QiLCJhbGc...</span></code></pre>
+            
+            <hr>
+            
+            <!-- Delete Log -->
+            <div class="endpoint-header" id="delete-log">
+                <span class="method-badge method-delete">DELETE</span>
+                <span class="endpoint-path">/api/log/{id}</span>
+            </div>
+            
+            <p>Deletes an access log entry.</p>
+            
+            <h3>Authentication</h3>
+            <p>Azure AD Bearer token required</p>
+            
+            <h3>Parameters</h3>
+            
+            <h4>Path Parameters</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Type</th>
+                        <th>Required</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>id</td>
+                        <td>int</td>
+                        <td>Yes</td>
+                        <td>Access log ID to delete</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h3>Response</h3>
+            
+            <div class="response-section">
+                <div class="response-header">
+                    <h4>Success Response</h4>
+                    <span class="status-code status-success">204 No Content</span>
+                </div>
+                <p>Empty response body</p>
+            </div>
+            
+            <div class="response-section">
+                <div class="response-header">
+                    <h4>Error Responses</h4>
+                </div>
+                <ul>
+                    <li><span class="status-code status-error">404 Not Found</span> - Log entry not found</li>
+                    <li><span class="status-code status-error">400 Bad Request</span> - Failed to delete log entry</li>
+                </ul>
+            </div>
+            
+            <h3>Example Request</h3>
+            <pre><code class="http"><span class="method">DELETE</span> <span class="url">https://mfaadmin.local/api/log/123</span>
+<span class="header-name">Authorization:</span> <span class="header-value">Bearer eyJ0eXAiOiJKV1QiLCJhbGc...</span></code></pre>
+            
+            <hr>
+            
+            <!-- Get Logs by System -->
+            <div class="endpoint-header" id="get-logs-by-system">
+                <span class="method-badge method-get">GET</span>
+                <span class="endpoint-path">/api/log/system/{systemName}</span>
+            </div>
+            
+            <p>Retrieves access logs for a specific system.</p>
+            
+            <h3>Authentication</h3>
+            <p>Azure AD Bearer token required</p>
+            
+            <h3>Parameters</h3>
+            
+            <h4>Path Parameters</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Type</th>
+                        <th>Required</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>systemName</td>
+                        <td>string</td>
+                        <td>Yes</td>
+                        <td>Name of the system</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h4>Query Parameters</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Type</th>
+                        <th>Required</th>
+                        <th>Default</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>take</td>
+                        <td>int</td>
+                        <td>No</td>
+                        <td>100</td>
+                        <td>Number of records to return</td>
+                    </tr>
+                    <tr>
+                        <td>skip</td>
+                        <td>int</td>
+                        <td>No</td>
+                        <td>0</td>
+                        <td>Number of records to skip</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h3>Response</h3>
+            
+            <div class="response-section">
+                <div class="response-header">
+                    <h4>Success Response</h4>
+                    <span class="status-code status-success">200 OK</span>
+                </div>
+                <p>Same as GET /api/log</p>
+            </div>
+            
+            <h3>Example Request</h3>
+            <pre><code class="http"><span class="method">GET</span> <span class="url">https://mfaadmin.local/api/log/system/PHPPortal?take=20</span>
+<span class="header-name">Authorization:</span> <span class="header-value">Bearer eyJ0eXAiOiJKV1QiLCJhbGc...</span></code></pre>
+            
+            <hr>
+            
+            <!-- Get Recent Logs -->
+            <div class="endpoint-header" id="get-recent-logs">
+                <span class="method-badge method-get">GET</span>
+                <span class="endpoint-path">/api/log/system/{systemName}/recent</span>
+            </div>
+            
+            <p>Retrieves recent access logs for a specific system.</p>
+            
+            <h3>Authentication</h3>
+            <p>Azure AD Bearer token required</p>
+            
+            <h3>Parameters</h3>
+            
+            <h4>Path Parameters</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Type</th>
+                        <th>Required</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>systemName</td>
+                        <td>string</td>
+                        <td>Yes</td>
+                        <td>Name of the system</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h4>Query Parameters</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Type</th>
+                        <th>Required</th>
+                        <th>Default</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>hours</td>
+                        <td>int</td>
+                        <td>No</td>
+                        <td>24</td>
+                        <td>Number of hours to look back</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h3>Response</h3>
+            
+            <div class="response-section">
+                <div class="response-header">
+                    <h4>Success Response</h4>
+                    <span class="status-code status-success">200 OK</span>
+                </div>
+                <p>Same as GET /api/log</p>
+            </div>
+            
+            <h3>Example Request</h3>
+            <pre><code class="http"><span class="method">GET</span> <span class="url">https://mfaadmin.local/api/log/system/PHPPortal/recent?hours=48</span>
+<span class="header-name">Authorization:</span> <span class="header-value">Bearer eyJ0eXAiOiJKV1QiLCJhbGc...</span></code></pre>
+            
+            <hr>
+            
+            <!-- Get Session Logs -->
+            <div class="endpoint-header" id="get-session-logs">
+                <span class="method-badge method-get">GET</span>
+                <span class="endpoint-path">/api/log/system/{systemName}/{sessionId}</span>
+            </div>
+            
+            <p>Retrieves all access logs for a specific session.</p>
+            
+            <h3>Authentication</h3>
+            <p>Azure AD Bearer token required</p>
+            
+            <h3>Parameters</h3>
+            
+            <h4>Path Parameters</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Type</th>
+                        <th>Required</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>systemName</td>
+                        <td>string</td>
+                        <td>Yes</td>
+                        <td>Name of the system</td>
+                    </tr>
+                    <tr>
+                        <td>sessionId</td>
+                        <td>Guid</td>
+                        <td>Yes</td>
+                        <td>Session ID</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h3>Response</h3>
+            
+            <div class="response-section">
+                <div class="response-header">
+                    <h4>Success Response</h4>
+                    <span class="status-code status-success">200 OK</span>
+                </div>
+                <p>Same as GET /api/log</p>
+            </div>
+            
+            <h3>Example Request</h3>
+            <pre><code class="http"><span class="method">GET</span> <span class="url">https://mfaadmin.local/api/log/system/PHPPortal/a7b8c9d0-1234-5678-9012-e3f4567890ab</span>
+<span class="header-name">Authorization:</span> <span class="header-value">Bearer eyJ0eXAiOiJKV1QiLCJhbGc...</span></code></pre>
+            
+        </main>
+    </div>
+    
+    <script>
+        // Mobile menu toggle
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+        
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    targetElement.scrollIntoView({ behavior: 'smooth' });
+                    
+                    // Close mobile menu if open
+                    document.getElementById('sidebar').classList.remove('open');
+                    
+                    // Update active link
+                    document.querySelectorAll('.nav-link').forEach(navLink => {
+                        navLink.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                }
+            });
+        });
+        
+        // Highlight active section on scroll
+        window.addEventListener('scroll', function() {
+            const sections = document.querySelectorAll('[id]');
+            const scrollPos = window.scrollY + 100;
+            
+            sections.forEach(section => {
+                const top = section.offsetTop;
+                const height = section.offsetHeight;
+                const id = section.getAttribute('id');
+                const navLink = document.querySelector(`.nav-link[href="#${id}"]`);
+                
+                if (navLink && scrollPos >= top && scrollPos < top + height) {
+                    document.querySelectorAll('.nav-link').forEach(link => {
+                        link.classList.remove('active');
+                    });
+                    navLink.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
